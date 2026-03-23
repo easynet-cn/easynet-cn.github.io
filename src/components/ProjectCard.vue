@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import type { Component } from 'vue'
+import { useI18n } from 'vue-i18n'
 import {
   Github,
   Server,
@@ -10,10 +11,13 @@ import {
   Database,
   Globe,
   Zap,
+  Shield,
   Clock,
   GitCommit,
   ExternalLink,
 } from 'lucide-vue-next'
+
+const { t } = useI18n()
 
 interface Commit {
   sha: string
@@ -47,17 +51,33 @@ const mainIconMap: Record<string, Component> = { server: Server, notebook: Noteb
 const techIconMap: Record<string, Component> = { cpu: Cpu, database: Database, globe: Globe, zap: Zap, code: Code2 }
 
 const commits = ref<Commit[]>([])
+const license = ref<{ name: string; url: string | null } | null>(null)
 const loading = ref(true)
 
 onMounted(async () => {
   try {
     const repoPath = props.githubUrl.replace('https://github.com/', '')
-    const response = await fetch(`https://api.github.com/repos/${repoPath}/commits?per_page=3`)
-    if (response.ok) {
-      commits.value = await response.json()
+
+    const [commitsRes, repoRes] = await Promise.all([
+      fetch(`https://api.github.com/repos/${repoPath}/commits?per_page=3`),
+      fetch(`https://api.github.com/repos/${repoPath}`),
+    ])
+
+    if (commitsRes.ok) {
+      commits.value = await commitsRes.json()
+    }
+
+    if (repoRes.ok) {
+      const repoData = await repoRes.json()
+      if (repoData.license) {
+        license.value = {
+          name: repoData.license.spdx_id || repoData.license.name,
+          url: repoData.license.url,
+        }
+      }
     }
   } catch (error) {
-    console.error('Failed to fetch commits:', error)
+    console.error('Failed to fetch project data:', error)
   } finally {
     loading.value = false
   }
@@ -96,13 +116,26 @@ function formatDate(dateStr: string) {
       <div class="mb-8">
         <div class="flex items-center gap-2 mb-4 text-white/40 text-xs font-bold uppercase tracking-widest">
           <Code2 :size="16" />
-          Technologies Used
+          {{ t('projectCard.technologies') }}
         </div>
         <div class="flex flex-wrap gap-4">
           <div v-for="tech in technologies" :key="tech.name" class="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-white/5 hover:border-white/10 transition-colors">
             <component :is="techIconMap[tech.icon]" :size="16" class="text-white/60" />
             <span class="text-sm text-white/70">{{ tech.name }}</span>
           </div>
+        </div>
+      </div>
+
+      <!-- License -->
+      <div class="mb-8">
+        <div class="flex items-center gap-2 mb-4 text-white/40 text-xs font-bold uppercase tracking-widest">
+          <Shield :size="16" />
+          {{ t('projectCard.license') }}
+        </div>
+        <div class="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-white/5 w-fit">
+          <span class="text-sm text-white/70">
+            {{ license ? license.name : (loading ? t('projectCard.loading') : t('projectCard.defaultLicense')) }}
+          </span>
         </div>
       </div>
 
@@ -120,7 +153,7 @@ function formatDate(dateStr: string) {
       <div class="flex items-center justify-between mb-4">
         <div class="flex items-center gap-2 text-white/40 text-xs font-bold uppercase tracking-widest">
           <GitCommit :size="16" />
-          Recent Activity
+          {{ t('projectCard.recentActivity') }}
         </div>
         <div v-if="loading" class="w-4 h-4 border-2 border-white/20 border-t-white/60 rounded-full animate-spin" />
       </div>
@@ -139,14 +172,14 @@ function formatDate(dateStr: string) {
             </div>
           </a>
         </template>
-        <p v-else-if="!loading" class="text-xs text-white/30 italic">No recent activity found</p>
+        <p v-else-if="!loading" class="text-xs text-white/30 italic">{{ t('projectCard.noActivity') }}</p>
       </div>
     </div>
 
     <!-- CTA -->
     <div class="p-8 pt-0">
       <a :href="githubUrl" target="_blank" rel="noopener noreferrer" class="w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r text-white font-semibold hover:opacity-90 transition-opacity" :class="colorClass">
-        View on GitHub
+        {{ t('projectCard.viewOnGithub') }}
         <ExternalLink :size="16" />
       </a>
     </div>
