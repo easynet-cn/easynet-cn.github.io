@@ -34,13 +34,13 @@ export default {
     },
     enote: {
       description:
-        '基于 Tauri 和 SeaORM 构建的现代跨平台桌面笔记应用。支持富文本与 Markdown 编辑、内容加密和 MCP 集成。',
+        '基于 Tauri 和 SeaORM 构建的现代跨平台桌面笔记应用。支持富文本与 Markdown 编辑、内容加密、MCP 集成和远程服务器后端。',
       features: [
         '富文本（TipTap）与 Markdown 双模式编辑器',
         'AES-256-GCM 内容加密',
         'MCP（模型上下文协议）集成',
-        '基于 SeaORM 的多数据库支持（SQLite、MySQL、PostgreSQL）',
-        '多格式导入（印象笔记、有道云笔记、Notion）',
+        '多后端支持（SQLite、MySQL、PostgreSQL、ENote Server）',
+        '远程服务器支持多种认证（Bearer/JWT/OAuth2 等）',
         '跨平台（Windows、macOS、Linux）',
       ],
     },

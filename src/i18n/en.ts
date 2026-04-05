@@ -36,13 +36,13 @@ export default {
     },
     enote: {
       description:
-        'A modern, cross-platform desktop note-taking application built with Tauri and SeaORM. Features rich text and Markdown editing, content encryption, and MCP integration.',
+        'A modern, cross-platform desktop note-taking application built with Tauri and SeaORM. Features rich text and Markdown editing, content encryption, MCP integration, and remote server backend.',
       features: [
         'Rich Text (TipTap) & Markdown Dual-mode Editor',
         'AES-256-GCM Content Encryption',
         'Model Context Protocol (MCP) Integration',
-        'Multi-database via SeaORM (SQLite, MySQL, PostgreSQL)',
-        'Multi-format Import (Evernote, Youdao, Notion)',
+        'Multi-backend (SQLite, MySQL, PostgreSQL, ENote Server)',
+        'Remote server with multiple auth (Bearer/JWT/OAuth2, etc.)',
         'Cross-platform (Windows, macOS, Linux)',
       ],
     },

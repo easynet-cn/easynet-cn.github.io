@@ -124,7 +124,7 @@ function toggleLocale() {
           :description="t('projects.enote.description')"
           icon="notebook"
           github-url="https://github.com/easynet-cn/enote"
-          :tags="['Tauri', 'Vue 3', 'SeaORM', 'MCP', 'Desktop']"
+          :tags="['Tauri', 'Vue 3', 'SeaORM', 'MCP', 'HTTP Backend', 'Desktop']"
           :features="(tm('projects.enote.features') as string[])"
           :technologies="[
             { name: 'Tauri', icon: 'zap' },
